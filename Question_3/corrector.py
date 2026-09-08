@@ -1,4 +1,4 @@
-from models import SpellingModels
+from .models import SpellingModels
 
 class SpellingCorrector:
     def __init__(self, models: SpellingModels):
