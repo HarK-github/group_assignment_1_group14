@@ -1,3 +1,5 @@
+import os
+import pickle
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning, module="nltk")
 
@@ -77,3 +79,18 @@ class SpellingModels:
              candidates.update(self.sym_spell_dict[misspelled_word])
              
         return candidates
+
+    def save(self, filepath: str):
+        """Saves the trained spelling models to a pickle file."""
+        os.makedirs(os.path.dirname(os.path.abspath(filepath)), exist_ok=True)
+        with open(filepath, 'wb') as f:
+            pickle.dump(self, f)
+        print(f"SpellingModels saved to: {filepath}")
+
+    @classmethod
+    def load(cls, filepath: str) -> "SpellingModels":
+        """Loads a pre-trained SpellingModels instance from a pickle file."""
+        with open(filepath, 'rb') as f:
+            models = pickle.load(f)
+        print(f"SpellingModels loaded from: {filepath}")
+        return models
