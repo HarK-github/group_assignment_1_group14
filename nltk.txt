@@ -1,0 +1,5 @@
+brown
+universal_tagset
+treebank
+punkt
+punkt_tab

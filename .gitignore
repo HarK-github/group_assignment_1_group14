@@ -4,3 +4,5 @@ __pycache__/
 *$py.class
 ud_cache/
 .ipynb_checkpoints/
+*.log
+venv/
