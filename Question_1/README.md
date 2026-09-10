@@ -58,7 +58,7 @@ To avoid zero-probability bottlenecks on unseen $n$-grams while rewarding attest
 #### Viterbi Dynamic Programming with Beam Search
 For an unspaced input string $S$ of length $N$:
 - **Trellis State:** Let $\text{dp}[j]$ store hypotheses ending at character position $j \in [1, N]$.
-- **Recurrence Relation:** For every candidate word $w = S[i:j]$ where $\max(0, j - \text{max\_word\_len}) \le i < j$:
+- **Recurrence Relation:** For every candidate word $w = S[i:j]$ where $\max(0, j - L_{\max}) \le i < j$ (with maximum word length $L_{\max} = 20$):
   $$\text{Score}(j, w_{\text{prev}}, w) = \max_{w_{\text{prev2}}} \left[ \text{Score}(i, w_{\text{prev2}}, w_{\text{prev}}) + \log P(w \mid w_{\text{prev2}}, w_{\text{prev}}) \right]$$
 - **Beam Search Pruning:** To maintain $O(N \cdot L \cdot B)$ runtime complexity, only the top $B = 20$ highest-scoring hypotheses are retained at each character index $j$.
 - **Out-of-Vocabulary (OOV) Fallback:** Single-character transitions are allowed with an OOV penalty ($\text{pen} = -18.0$) to guarantee the search path never deadlocks on unknown words.
@@ -137,7 +137,7 @@ Each token is mapped to its exact half-open character span $[start, end)$ over t
 
 #### Segmentation Cut Metrics (`SegmentationMetrics`)
 For token sequence $W = (w_0, \dots, w_{M-1})$, boundary cuts are character offsets:
-$$\text{Boundaries} = \left\{ \sum_{m=0}^t \text{len}(w_m) \;\Big|\; 0 \le t < |W| - 1 \right\}$$
+$$\text{Boundaries} = \left\lbrace \sum_{m=0}^t \text{len}(w_m) \;\Big|\; 0 \le t < |W| - 1 \right\rbrace$$
 - **Boundary Precision ($P$):** $\frac{|\text{Pred} \cap \text{Gold}|}{|\text{Pred}|}$
 - **Boundary Recall ($R$):** $\frac{|\text{Pred} \cap \text{Gold}|}{|\text{Gold}|}$
 - **Boundary F1 ($F_1$):** $\frac{2 \cdot P \cdot R}{P + R}$
