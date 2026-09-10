@@ -477,6 +477,19 @@ def cky_parse_with_probability(
 # where appropriate.
 BROWN_TO_PTB = {
 
+    # Universal POS Tagset conversions (from Question 1 HMM tagger)
+    "noun": "NN",
+    "verb": "VB",
+    "adj": "JJ",
+    "adv": "RB",
+    "det": "DT",
+    "adp": "IN",
+    "pron": "PRP",
+    "conj": "CC",
+    "prt": "RP",
+    "num": "CD",
+    "x": "FW",
+
     # Adjectives
     "jj": "JJ",
     "jjt": "JJR",
