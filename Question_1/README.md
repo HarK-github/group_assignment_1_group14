@@ -40,7 +40,7 @@ List of (Word, Tag) Tuples & Aligned Error Attribution
 
 Word segmentation is modeled as finding the token sequence $\hat{W} = (w_1, w_2, \dots, w_M)$ that maximizes the sentence log-probability under a Trigram Language Model:
 
-$$\hat{W} = \operatorname*{arg\,max}_{w_1 \dots w_M} \sum_{i=1}^{M+1} \log P(w_i \mid w_{i-2}, w_{i-1})$$
+$$\hat{W} = \arg\max_{w_1 \dots w_M} \sum_{i=1}^{M+1} \log P(w_i \mid w_{i-2}, w_{i-1})$$
 
 where $w_{-1} = w_0 = \langle\text{BOS}\rangle$ and $w_{M+1} = \langle\text{EOS}\rangle$.
 
@@ -74,7 +74,7 @@ At position $i$, the baseline selects the longest substring $S[i : i+l]$ present
 
 The POS tagger models the joint sequence probability of words $W = (w_1, \dots, w_N)$ and tags $T = (t_1, \dots, t_N)$ under the Markov assumption:
 
-$$\hat{T} = \operatorname*{arg\,max}_{t_1 \dots t_N} \prod_{i=1}^N P(w_i \mid t_i) P(t_i \mid t_{i-1})$$
+$$\hat{T} = \arg\max_{t_1 \dots t_N} \prod_{i=1}^N P(w_i \mid t_i) P(t_i \mid t_{i-1})$$
 
 #### Parameter Estimation (with Laplace Smoothing, $k = 10^{-4}$)
 1. **Transition Probabilities:**
@@ -87,11 +87,11 @@ $$\hat{T} = \operatorname*{arg\,max}_{t_1 \dots t_N} \prod_{i=1}^N P(w_i \mid t_
   $$V[0, t] = \log P(t \mid \langle\text{START}\rangle) + \log P(w_0 \mid t)$$
 - **Induction ($i = 1 \dots N-1$):**
   $$V[i, t] = \max_{t'} \left( V[i-1, t'] + \log P(t \mid t') \right) + \log P(w_i \mid t)$$
-  $$\text{Backpointer}[i, t] = \operatorname*{arg\,max}_{t'} \left( V[i-1, t'] + \log P(t \mid t') \right)$$
+  $$\text{Backpointer}[i, t] = \arg\max_{t'} \left( V[i-1, t'] + \log P(t \mid t') \right)$$
 - **Termination & Backtracking:** Reconstructs the globally optimal tag sequence in $O(N \cdot |T|^2)$ time.
 
 #### Tagging Baseline: Most-Frequent-Tag (`MFTBaseline`)
-Assigns each word its unigram mode tag $\hat{t}_i = \operatorname*{arg\,max}_t C(w_i, t)$ observed in the training corpus, falling back to `'NOUN'` for unseen words.
+Assigns each word its unigram mode tag $\hat{t}_i = \arg\max_t C(w_i, t)$ observed in the training corpus, falling back to `'NOUN'` for unseen words.
 - *Failure Modes:* Completely ignores syntactic context, failing on words with POS ambiguity (e.g., *"run"* as NOUN vs. VERB).
 
 ---
@@ -141,7 +141,7 @@ $$\text{Boundaries} = \left\{ \sum_{m=0}^t \text{len}(w_m) \;\Big|\; 0 \le t < |
 - **Boundary Precision ($P$):** $\frac{|\text{Pred} \cap \text{Gold}|}{|\text{Pred}|}$
 - **Boundary Recall ($R$):** $\frac{|\text{Pred} \cap \text{Gold}|}{|\text{Gold}|}$
 - **Boundary F1 ($F_1$):** $\frac{2 \cdot P \cdot R}{P + R}$
-- **Sentence Exact Match Rate:** $\mathbb{I}[\text{Pred Tokens} == \text{Gold Tokens}]$
+- **Sentence Exact Match Rate:** $\mathbf{1}[\text{Pred Tokens} = \text{Gold Tokens}]$
 
 ---
 
