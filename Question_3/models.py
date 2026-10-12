@@ -4,12 +4,14 @@ import warnings
 warnings.filterwarnings("ignore", category=UserWarning, module="nltk")
 
 import nltk
+from nltk.corpus import words as nltk_words
 from nltk.corpus import brown
 from collections import Counter, defaultdict
 import string
 
 # Ensure the corpus is downloaded
 nltk.download('brown', quiet=True)
+nltk.download('words', quiet=True)
 
 class SpellingModels:
     def __init__(self):
@@ -20,6 +22,29 @@ class SpellingModels:
         self.vocab = set(self.words)
         self.unigram_counts = Counter(self.words)
         self.total_words = sum(self.unigram_counts.values())
+
+        self.words = [w.lower() for w in brown.words() if w.isalpha()]
+        self.vocab = set(self.words)
+
+        # Vocabulary specifically for word segmentation
+        SHORT_SEGMENT_WORDS = {
+            "a", "i",
+            "am", "an", "as", "at",
+            "be", "by", "do", "go",
+            "he", "if", "in", "is", "it",
+            "me", "my", "no", "of", "on",
+            "or", "so", "to", "up", "us", "we"
+        }
+
+        self.segmentation_vocab = {
+            w.lower()
+            for w in nltk_words.words()
+            if w.isalpha()
+            and (
+                len(w) >= 3
+                or w.lower() in SHORT_SEGMENT_WORDS
+            )
+        }
         
         # Part 1: Language Model (Bigram Model)
         self.bigrams = list(nltk.bigrams(self.words))
@@ -89,8 +114,30 @@ class SpellingModels:
 
     @classmethod
     def load(cls, filepath: str) -> "SpellingModels":
-        """Loads a pre-trained SpellingModels instance from a pickle file."""
         with open(filepath, 'rb') as f:
             models = pickle.load(f)
+
+        # Add the new attribute to older saved models
+        if not hasattr(models, "segmentation_vocab"):
+            nltk.download("words", quiet=True)
+
+            SHORT_SEGMENT_WORDS = {
+                "a", "i", "am", "an", "as", "at",
+                "be", "by", "do", "go", "he", "if",
+                "in", "is", "it", "me", "my", "no",
+                "of", "on", "or", "so", "to", "up",
+                "us", "we"
+            }
+
+            models.segmentation_vocab = {
+                w.lower()
+                for w in nltk_words.words()
+                if w.isalpha()
+                and (
+                    len(w) >= 3
+                    or w.lower() in SHORT_SEGMENT_WORDS
+                )
+            }
+
         print(f"SpellingModels loaded from: {filepath}")
-        return models
+        return models

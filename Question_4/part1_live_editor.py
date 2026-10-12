@@ -143,11 +143,11 @@ class EditorPipeline:
 
         # 1. [SEGMENT-ALERT] Check
         if self.spelling_models and self.segmenter:
-            if clean_token not in self.spelling_models.vocab or len(clean_token) > 15:
+            if clean_token not in self.spelling_models.segmentation_vocab or len(clean_token) > 15:
                 is_oov = True
                 segmented = self.segmenter.segment(clean_token)
                 # If segmenter split the token into valid words
-                if len(segmented) > 1 and all(w in self.spelling_models.vocab for w in segmented):
+                if len(segmented) > 1 and all(w in self.spelling_models.segmentation_vocab for w in segmented):
                     corrected_token = " ".join(segmented)
                     # Attempt to preserve original capitalization if possible (basic)
                     if token.istitle():
